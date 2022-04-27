@@ -632,6 +632,7 @@ class controls extends Phaser.Scene {
 
     create ()
     {
+        console.log('create game');
 		// var test = this.add.text(0, 700, 'testing', { font: '18px Courier', fill: '#00ff00' });
 
 		// var button = this.add.sprite(50, 760, 'button', actionOnClick, this, 2, 1, 0);
@@ -738,6 +739,88 @@ function actionOnClick () {
     // }
 
 
+// THE SWIPE STUFF
+// class Game extends Phaser.Scene
+class demo extends Phaser.Scene {
+    constructor() {
+        // super('examples');
+        super({ key: 'examples', active: true });
+        // super({
+        //     key: 'examples'
+        // })
+    }
+
+    preload() { 
+        console.log('preload swipe');
+        this.load.scenePlugin({
+            key: 'rexgesturesplugin',
+            url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexgesturesplugin.min.js',
+            sceneKey: 'rexGestures'
+        });      
+    }
+
+    create() {
+        console.log('create swipe');
+        // this.print = print = this.add.text(0, 0, 'fgjfjf');
+
+        this.swipeInput = this.rexGestures.add.swipe({ velocityThreshold: 1000 })
+            .on('swipe', function (swipe) {
+                // print.text += `swipe, v = ${swipe.dragVelocity}\n`;
+            }, this);
+    }
+
+    update() {
+        if (this.swipeInput.isSwiped) {
+            // this.print.text += `update(): swipe ${dumpDirectionStates(this.swipeInput)}\n`;
+            console.log(this.swipeInput);
+            console.log(dumpDirectionStates(this.swipeInput));
+            // if (dumpDirectionStates(this.swipeInput)=='left') {
+            //     console.log('LEFT');
+            // }
+
+        }
+    }
+}
+
+var directions = ['left', 'right', 'up', 'down'];
+var dumpDirectionStates = function (swipe) {
+    var s = '';
+    var dir;
+    for (var i = 0, cnt = directions.length; i < cnt; i++) {
+        dir = directions[i];
+        if (swipe[dir]) {
+            s += ' ' + dir;
+            if(dir=="left") {
+                console.log('LEFT');
+                snake.faceLeft();
+            }
+            if(dir=="right") {
+                console.log('RIGHT');
+                snake.faceRight();
+            }
+            if(dir=="up") {
+                console.log('UP');
+                snake.faceUp();
+            }
+            if(dir=="down") {
+                console.log('DOWN');
+                snake.faceDown();
+            }
+        }
+    }
+    return s;
+    // return dir;
+}
+
+// THE SWIPE STUFF
+
+
+
+
+
+
+
+
 
 
 
@@ -759,7 +842,7 @@ var config = {
     height: 900,
     backgroundColor: '#000000',
     parent: 'snake',
-    scene: [ Game, GUI, controls ]
+    scene: [ Game, GUI, controls, demo ]
 };
 
 var snake;

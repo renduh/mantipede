@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>Snake</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="initial-scale=1">
 
 <style>
 html,body {
@@ -20,11 +20,11 @@ html,body {
     align-items: center;
 }
 #snake canvas {
-	width: 100%!important;
-    height: 100%!important;
+/*	width: 100%!important;
+    height: 100%!important;*/
     object-fit: contain;
-    max-width:640px;
-    max-height:800px;
+/*    max-width:640px;
+    max-height:800px;*/
 }
 </style>
 </head>
@@ -34,55 +34,32 @@ html,body {
 <div id="snake">
   
 
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.55.2/phaser-arcade-physics.js" integrity="sha512-5j9vKkOm+Dy7+3r0aeNj7wMrjx/jTcskiYsJ5GGGVc/+FXgfkM/0wNd4ekH7+A6S7vvt3Z9oTz8/h0n/3t6B3A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+
 <script>
 
-var config = {
-    type: Phaser.WEBGL,
-    width: 640,
-    height: 800,
-    backgroundColor: '#000000',
-    parent: 'snake',
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
+
+
+
+
+
+
+
+
+
+
+class Game extends Phaser.Scene {
+
+    constructor ()
+    {
+        super('GameScene');
     }
-};
 
-var snake;
-var food;
-var cursors;
-
-
-// var pixelsize = 16;
-// var gridwidth = 40;
-// var gridheight =30;
-// var pixelsize = 32;
-// var gridwidth = 20; // 640/32
-// var gridheight = 15; // 480/32
-var pixelsize = 40;
-var gridwidth = 640/pixelsize; // 640/32
-var gridheight = 480/pixelsize; // 480/32
-
-
-//  Direction consts
-var UP = 0;
-var DOWN = 1;
-var LEFT = 2;
-var RIGHT = 3;
-
-var game = new Phaser.Game(config);
-
-    let score = 0;
-    let scoreBoard;
-    let scorecamera;
-
-// var camera = new camera(game, 0, 0, 640, 480);
-// this.game.setBounds(0, 0, 640, 480);
-
-
-function preload ()
+preload ()
 {
     this.load.image('food', 'img/food.png');
     this.load.image('body', 'img/body.png');
@@ -105,9 +82,11 @@ function preload ()
     this.load.audio('swine', 'audio/swine.mp3');
     this.load.audio('jeezoh', 'audio/jeezoh.mp3');
     this.load.audio('classwee', 'audio/class.mp3');
+
+    this.load.image('bg', 'img/bg.png');
 }
 
-function create ()
+create ()
 {
 
 
@@ -125,24 +104,48 @@ function create ()
         // console.log(this.data.list.score);
 
         // scoreBoard = this.add.text(0, 0, "SCORE: 0", { font: '18px Courier', fill: '#00ff00' });
-        scorecamera = this.cameras.add(0, 0, 680, 40);
-        scorecamera.setBackgroundColor('#000000');
-        scoreBoard = this.add.text(0, 0, "SCORE: 0", { font: '18px Courier', fill: '#00ff00' });
+        // scorecamera = this.cameras.add(0, 0, 680, 40);
+        // scorecamera.setBackgroundColor('#000000');
+        // scoreBoard = this.add.text(0, 0, "SCORE: 0", { font: '18px Courier', fill: '#00ff00' });
         // scorecamera.ignore([  ]);
+
+        score=0;
+
+        // Adding the background
+        this.add.image(0, 0, 'bg').setOrigin(0, 0);
 
 
 
 	// Create the camera
 	this.game.camera = this.cameras.main;
-	this.game.camera.setViewport(0, 40, 640, 480);
+	this.game.camera.setViewport(0, 40, 640, 640);
 	this.game.camera.setBackgroundColor('#9e1a1a');
-	this.cameras.main.ignore(scoreBoard);
+	// this.cameras.main.ignore(scoreBoard);
 	console.log(this.game);
 
 	var swine = this.sound.add('swine');
 	var aye = this.sound.add('aye');
 	var jeezoh = this.sound.add('jeezoh');
 	var classwee = this.sound.add('classwee');
+
+
+
+	startButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Try again', { font: '32px Courier', fill: '#00ff00' })
+	    .setOrigin(0.5)
+	    .setPadding(10)
+	    .setStyle({ backgroundColor: '#111' })
+	    .setInteractive({ useHandCursor: true })
+	    // .on('pointerdown', startGame)
+
+	    .on('pointerdown', () => this.scene.restart())
+
+
+
+
+	    .on('pointerover', () => startButton.setStyle({ fill: '#f39c12' }))
+	    .on('pointerout', () => startButton.setStyle({ fill: '#FFF' }));
+	startButton.visible = false;
+
 
     var Food = new Phaser.Class({
 
@@ -173,7 +176,8 @@ function create ()
             	if (Math.random() > 0.5) {jeezoh.play();} else {classwee.play();}
             	// score++;
             	score = score+1030;
-            	scoreBoard.setText('Score: ' + score);
+            	// scoreBoard.setText('Score: ' + score);
+
 
 
             	// game.scene.scenes[0].data.list.score = game.scene.scenes[0].data.list.score + 1;
@@ -183,7 +187,8 @@ function create ()
             	console.log('Brian');
             	if (Math.random() > 0.5) {aye.play();} else {swine.play();}
             	score++;
-            	scoreBoard.setText('Score: ' + score);
+            	// scoreBoard.setText('Score: ' + score);
+
 
 
             	// var score = this.data.get('score') + 1;
@@ -203,7 +208,9 @@ function create ()
             	// console.log(game.scene.scenes[0].data.list.score);
             	// game.scene.scenes[0].data.list.score = game.scene.scenes[0].data.list.score + 1;
             	score = score+1030;
-            	scoreBoard.setText('Score: ' + score);
+            	// scoreBoard.setText('Score: ' + score);
+            	// this.events.emit('addScore');
+
 
 
 
@@ -385,6 +392,8 @@ function create ()
 
                 this.alive = false;
 
+                	startButton.visible = true;
+
                 return false;
             }
             else
@@ -450,7 +459,7 @@ function create ()
     cursors = this.input.keyboard.createCursorKeys();
 }
 
-function update (time, delta)
+update (time, delta)
 {
     if (!snake.alive)
     {
@@ -501,6 +510,9 @@ function update (time, delta)
 * @method repositionFood
 * @return {boolean} true if the food was placed, otherwise false
 */
+
+
+}
 function repositionFood ()
 {
     //  First create an array that assumes all positions
@@ -559,8 +571,228 @@ function repositionFood ()
 }
 
 
+var info;
+
+class GUI extends Phaser.Scene {
+
+    constructor ()
+    {
+        super({ key: 'UIScene', active: true });
+
+        this.score = 0;
+        
+    }
+
+    create ()
+    {
+        //  Our Text object to display the Score
+        info = this.add.text(0, 0, 'Score: 0', { font: '32px Courier', fill: '#00ff00' });
+
+        //  Grab a reference to the Game Scene
+        // let ourGame = this.scene.get('GameScene');
+
+        //  Listen for events from it
+        // ourGame.events.on('addScore', function () {
+
+        //     this.score += 10;
+
+        //     info.setText('Score: ' + this.score);
+
+        // }, this);
+    }
+
+    update ()
+    {
+    	info.setText('Score: ' + score);
+    }
+}
 
 
+
+class controls extends Phaser.Scene {
+
+    constructor ()
+    {
+        super({ key: 'controllers', active: true });
+
+        
+    }
+
+    preload ()
+    {
+    	// this.load.image('buttonU', 'img/food.png');
+    	// this.load.image('buttonD', 'img/food.png');
+    	// this.load.image('buttonL', 'img/food.png');
+    	// this.load.image('buttonR', 'img/food.png');
+    	this.load.image('buttonU', 'img/arrowup.png');
+    	this.load.image('buttonD', 'img/arrowdown.png');
+    	this.load.image('buttonL', 'img/arrowleft.png');
+    	this.load.image('buttonR', 'img/arrowright.png');
+    }
+
+    create ()
+    {
+		// var test = this.add.text(0, 700, 'testing', { font: '18px Courier', fill: '#00ff00' });
+
+		// var button = this.add.sprite(50, 760, 'button', actionOnClick, this, 2, 1, 0);
+
+		// this.game.camera.setViewport(0, 40, 640, 640);
+
+		this.game.camera = this.cameras.main;
+		this.game.camera.setViewport(0, 700, 640, 200);
+		this.game.camera.setBackgroundColor('#000000');
+
+		const buttonU = this.add.sprite( 320, 31, 'buttonU')
+		.setInteractive()
+		.on('pointerdown', () => {
+			console.log('clicked');
+			snake.faceUp();
+		});
+		// .on('pointerup', () => buttonU.setScale( 1 ));
+
+		const buttonD = this.add.sprite( 320, 169, 'buttonD')
+		.setInteractive()
+		.on('pointerdown', () => {
+			// buttonD.setScale( 1.1 );
+			console.log('clicked');
+			snake.faceDown();
+		});
+		// .on('pointerup', () => buttonD.setScale( 1 ));
+
+		const buttonL = this.add.sprite( 144, 100, 'buttonL')
+		.setInteractive()
+		.on('pointerdown', () => {
+			// buttonL.setScale( 1.1 );
+			console.log('clicked');
+			snake.faceLeft();
+		});
+		// .on('pointerup', () => buttonL.setScale( 1 ));
+
+		const buttonR = this.add.sprite( 496, 100, 'buttonR')
+		.setInteractive()
+		.on('pointerdown', () => {
+			// buttonR.setScale( 1.1 );
+			console.log('clicked');
+			snake.faceRight();
+		});
+		// .on('pointerup', () => buttonR.setScale( 1 ));
+
+
+		// buttonU.displayWidth =90;
+		// buttonU.displayHeight =90;
+		// buttonD.displayWidth =90;
+		// buttonD.displayHeight =90;
+		// buttonL.displayWidth =90;
+		// buttonL.displayHeight =90;
+		// buttonR.displayWidth =90;
+		// buttonR.displayHeight =90;
+
+
+
+    }
+
+    update ()
+    {
+
+    }
+}
+function actionOnClick () {
+
+    console.log('click');
+
+}
+
+
+
+
+
+
+// document.dispatchEvent(
+//   new KeyboardEvent("keydown", {
+//     keyCode: 38, // example values.
+
+//   })
+// );
+
+
+// document.dispatchEvent(
+//   new KeyboardEvent("keydown", {
+//     key: "ArrowUp",
+//     which: 38
+//   })
+// );
+
+
+
+    // if (e.keyCode == '38') {
+    //     // up arrow
+    // }
+    // else if (e.keyCode == '40') {
+    //     // down arrow
+    // }
+    // else if (e.keyCode == '37') {
+    //    // left arrow
+    // }
+    // else if (e.keyCode == '39') {
+    //    // right arrow
+    // }
+
+
+
+
+
+
+var config = {
+    type: Phaser.WEBGL,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        parent: 'snake',
+        max: {
+            width: 640,
+            height: 900
+        },
+        // autoCenter: Phaser.Scale.CENTER_BOTH,
+        // width: 640,
+        // height: 800
+    },
+    width: 640,
+    height: 900,
+    backgroundColor: '#000000',
+    parent: 'snake',
+    scene: [ Game, GUI, controls ]
+};
+
+var snake;
+var food;
+var cursors;
+
+var startButton;
+
+// var pixelsize = 16;
+// var gridwidth = 40;
+// var gridheight =30;
+// var pixelsize = 32;
+// var gridwidth = 20; // 640/32
+// var gridheight = 15; // 480/32
+var pixelsize = 64;
+var gridwidth = 640/pixelsize; // 640/32
+var gridheight = 640/pixelsize; // 480/32
+
+
+//  Direction consts
+var UP = 0;
+var DOWN = 1;
+var LEFT = 2;
+var RIGHT = 3;
+
+var game = new Phaser.Game(config);
+
+    let score = 0;
+    let scoreBoard;
+    let scorecamera;
+
+// var camera = new camera(game, 0, 0, 640, 480);
+// this.game.setBounds(0, 0, 640, 480);
 
 
 </script>
