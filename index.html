@@ -22,11 +22,7 @@ html,body {
     box-sizing: border-box;
 }
 #snake canvas {
-/*	width: 100%!important;
-    height: 100%!important;*/
     object-fit: contain;
-/*    max-width:640px;
-    max-height:800px;*/
 }
 </style>
 </head>
@@ -35,16 +31,9 @@ html,body {
 
 <div id="snake"></div>
   
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.55.2/phaser-arcade-physics.js" integrity="sha512-5j9vKkOm+Dy7+3r0aeNj7wMrjx/jTcskiYsJ5GGGVc/+FXgfkM/0wNd4ekH7+A6S7vvt3Z9oTz8/h0n/3t6B3A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-
-
-
 <script>
-
-
 
 class Start extends Phaser.Scene {
     constructor ()
@@ -65,19 +54,12 @@ class Start extends Phaser.Scene {
 
         this.game.camera = this.cameras.main;
         this.game.camera.setViewport(0, 0, 640, 936);
-        // this.game.camera.setBackgroundColor('#000000');
-        // this.game.camera.setBackgroundColor('rgba(0, 0, 0, 0.5)');
-
         this.scene.bringToTop();
         this.add.sprite( 0, 0, 'splash').setOrigin(0,0);
-        // var test = game.add.sprite(200, 200, 'mushroom');
-        // startButton = this.add.text(this.cameras.main.centerX, 782, 'Start Game', { font: '32px Courier', fill: '#00ff00' })
+
+
         startButton = this.add.sprite(this.cameras.main.centerX, 815, 'startbuttonimage', { font: '32px Courier', fill: '#00ff00' })
-        // .setOrigin(0.5)
-        // .setPadding(10)
-        // .setStyle({ backgroundColor: '#111' })
         .setInteractive({ useHandCursor: true })
-        // .on('pointerdown', startGame)
         .on('pointerdown', () => {
             running=true,
             game.scene.stop(this),
@@ -85,17 +67,11 @@ class Start extends Phaser.Scene {
             game.scene.start('swipecontrols'),
             game.scene.start('gui')
         });
-        // .on('pointerover', () => startButton.setStyle({ fill: '#f39c12' }))
-        // .on('pointerout', () => startButton.setStyle({ fill: '#FFF' }));
         startButton.visible = true;
     }
     update ()
     {
-        // game.scene.stop('GameScene');
-        // info.setText('Score: ' + score);
-        // running=false;
         if (keyENTER.isDown || this.telltorun==true) {
-            // this.scene.restart();
             console.log('enter');
             game.scene.stop(this);
             running=true;
@@ -113,7 +89,6 @@ class Game extends Phaser.Scene {
     constructor ()
     {
         super('GameScene');
-        // super({ key: 'GameScene', active: true });
     }
 
 preload ()
@@ -153,14 +128,10 @@ create ()
     game.scene.stop('Restart');
     // Adding the background
     this.add.image(0, 0, 'bg').setOrigin(0, 0);
-
 	// Create the camera
 	this.game.camera = this.cameras.main;
 	this.game.camera.setViewport(0, 40, 640, 896);
 	this.game.camera.setBackgroundColor('#9e1a1a');
-	// this.cameras.main.ignore(scoreBoard);
-	console.log(this.game);
-
 	var swine = this.sound.add('swine');
 	var aye = this.sound.add('aye');
 	var jeezoh = this.sound.add('jeezoh');
@@ -185,12 +156,9 @@ create ()
         eat: function ()
         {
             this.total++;
-            // console.log(food.texture.key); 
             if (food.texture.key=="food1030") {
             	console.log('1030');
-            	// jeezoh.play();
             	if (Math.random() > 0.5) {jeezoh.play();} else {classwee.play();}
-            	// score++;
             	score = score+1030;
                 score1030++;
             } else if (food.texture.key=="foodbrian") {
@@ -200,7 +168,6 @@ create ()
                 scorebrian++;
             } else {
             	console.log('1030');
-            	// jeezoh.play();
             	if (Math.random() > 0.5) {jeezoh.play();} else {classwee.play();}
             	score = score+1030;
                 score1030++;
@@ -329,32 +296,17 @@ create ()
 
             if (hitBody)
             {
-                console.log('dead');
-
                 this.alive = false;
-
-                // restartButton.visible = true;
                 running=false;
                 game.scene.start('Restart');
-                // game.scene.stop('GameScene');
                 game.scene.stop(this);
                 game.scene.stop('swipecontrols');
-                // game.scene.stop('gui');
-
-
-                //     game.scene.stop(this),
-                //     game.scene.start('GameScene'),
-                //     game.scene.start('swipecontrols'),
-                //     game.scene.start('gui')
-
-
                 return false;
             }
             else
             {
                 //  Update the timer ready for the next movement
                 this.moveTime = time + this.speed;
-
                 return true;
             }
         },
@@ -385,10 +337,8 @@ create ()
         {
             //  Remove all body pieces from valid positions list
             this.body.children.each(function (segment) {
-
                 var bx = segment.x / pixelsize;
                 var by = segment.y / pixelsize;
-
                 grid[by][bx] = false;
 
             });
@@ -405,17 +355,14 @@ create ()
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    // keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 }
 
 update (time, delta)
 {
-    // console.log(Phaser.Input.Keyboard.KeyCodes);
     if (!snake.alive)
     {
         return;
     }
-
     /**
     * Check which key is pressed, and then change the direction the snake
     * is heading based on that. The checks ensure you don't double-back
@@ -450,22 +397,14 @@ update (time, delta)
         }
         
     }
-
     if (snake.update(time))
     {
         //  If the snake updated, we need to check for collision against food
-
         if (snake.collideWithFood(food))
         {
             repositionFood();
         }
     }
-
-    // if (keyENTER.isDown) {
-    //     this.scene.restart();
-    // }
-
-
 }
 
 /**
@@ -477,7 +416,6 @@ update (time, delta)
 * @method repositionFood
 * @return {boolean} true if the food was placed, otherwise false
 */
-
 
 }
 function repositionFood ()
@@ -537,25 +475,10 @@ function repositionFood ()
     }
 }
 
-
-
-
-
-
-
-
-
-
-var info;
-var info1030;
-var infobrian;
-
-
 class GUI extends Phaser.Scene {
 
     constructor ()
     {
-        // super({ key: 'UIScene', active: true });
         super('gui');
         this.score = 0;
     }
@@ -566,21 +489,11 @@ class GUI extends Phaser.Scene {
     }
     create ()
     {
-        //  Our Text object to display the Score
-        // this.game.camera = this.cameras.main;
-        // this.game.camera.setBackgroundColor('#000000');
-
         info = this.add.text(630, 5, 'Score: 0', { font: 'bold 32px Courier', fill: '#ebcb00', align: 'right' });
-
-
         info1030 = this.add.text(45, 5, '0', { font: 'bold 32px Courier', fill: '#ebcb00', align: 'left' });
         infobrian = this.add.text(165, 5, '0', { font: 'bold 32px Courier', fill: '#ebcb00', align: 'left' });
-
         this.add.sprite( 0, 0, 'icon1030').setOrigin(0,0).setScale(0.6);
         this.add.sprite( 120, 0, 'iconbrian').setOrigin(0,0).setScale(0.6);
-
-        
-
     }
     update ()
     {
@@ -593,18 +506,10 @@ class GUI extends Phaser.Scene {
 
 
 
-
-
-
 // THE SWIPE STUFF
-// class Game extends Phaser.Scene
 class SwipeController extends Phaser.Scene {
     constructor() {
         super('swipecontrols');
-        // super({ key: 'examples', active: true });
-        // super({
-        //     key: 'examples'
-        // })
     }
     preload() { 
         console.log('preload swipe');
@@ -616,22 +521,12 @@ class SwipeController extends Phaser.Scene {
     }
     create() {
         console.log('create swipe');
-        // this.print = print = this.add.text(0, 0, 'fgjfjf');
-
         this.swipeInput = this.rexGestures.add.swipe({ velocityThreshold: 500 })
             .on('swipe', function (swipe) {
-                // print.text += `swipe, v = ${swipe.dragVelocity}\n`;
             }, this);
     }
     update() {
         if (this.swipeInput.isSwiped) {
-            // this.print.text += `update(): swipe ${dumpDirectionStates(this.swipeInput)}\n`;
-            console.log(this.swipeInput);
-            console.log(dumpDirectionStates(this.swipeInput));
-            // if (dumpDirectionStates(this.swipeInput)=='left') {
-            //     console.log('LEFT');
-            // }
-
         }
     }
 }
@@ -662,17 +557,13 @@ var dumpDirectionStates = function (swipe) {
         }
     }
     return s;
-    // return dir;
 }
-
-// THE SWIPE STUFF
 
 
 
 class EndGame extends Phaser.Scene {
     constructor ()
     {
-        // super({ key: 'Restart', active: false });
         super('Restart');
     }
     preload ()
@@ -684,58 +575,24 @@ class EndGame extends Phaser.Scene {
     {
         this.game.camera = this.cameras.main;
         this.game.camera.setViewport(0, 0, 640, 936);
-        // this.game.camera.setBackgroundColor('#000000');
         this.add.sprite( 0, 0, 'theend').setOrigin(0,0);
         this.scene.bringToTop();
-
-        // running=false;
-
         running=false;
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-        // game.scene.stop('GameScene');
-
-
-
-
-                // game.scene.stop('GameScene');
-                game.scene.stop('swipecontrols');
-                game.scene.stop('gui');
-
-// var test = game.add.sprite(200, 200, 'mushroom');
-        // restartButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Try again', { font: '32px Courier', fill: '#00ff00' })
+	    game.scene.stop('swipecontrols');
+	    game.scene.stop('gui');
         restartButton = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, 'tryagain')
-            // .setOrigin(0.5)
-            // .setPadding(10)
-            // .setStyle({ backgroundColor: '#111' })
             .setInteractive({ useHandCursor: true })
-            // .on('pointerdown', startGame)
-            // .on('pointerdown', () => this.scene.restart())
             .on('pointerdown', () => 
-                // this.scene.restart()
-                // running=true,
                 game.scene.start('GameScene'),
                 game.scene.start('swipecontrols'),
                 game.scene.start('gui'),
-                // restartButton.visible = false
-                // this.scene.stop()
-                // game.scene.stop('Restart')
             );
-                // game.scene.start('Restart');
-                // game.scene.stop('GameScene');
-                // game.scene.stop('swipecontrols');
-                // game.scene.stop('gui');            
-
-            // .on('pointerover', () => restartButton.setStyle({ fill: '#f39c12' }))
-            // .on('pointerout', () => restartButton.setStyle({ fill: '#FFF' }));
-            // restartButton.visible = true;
-            // restartButton.depth = 100;
     }
     update ()
     {
-        // info.setText('Score: ' + score);
         running=false;
         if (keyENTER.isDown) {
-            // this.scene.restart();
             console.log('enter');
             game.scene.stop(this);
             running=true;
@@ -747,38 +604,25 @@ class EndGame extends Phaser.Scene {
 }
 
 
-
-
-
-
-
-    // if (keyENTER.isDown) {
-    //     this.scene.restart();
-    // }
-
-
 var config = {
-    // type: Phaser.WEBGL,
     type: Phaser.AUTO,
     scale: {
         mode: Phaser.Scale.FIT,
-        // autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
         parent: 'snake',
         max: {
             width: 640,
             height: 936
         },
-        // autoCenter: Phaser.Scale.CENTER_BOTH,
-        // width: 640,
-        // height: 800
     },
     width: 640,
     height: 936,
     backgroundColor: '#780066',
-    // parent: 'snake',
-    // scene: [ Game, GUI, controls, demo ]
     scene: [ Start, Game, GUI, SwipeController, EndGame ]
 };
+
+var info;
+var info1030;
+var infobrian;
 
 var snake;
 var food;
@@ -795,16 +639,9 @@ var restartButton;
 
 var running=false;
 
-// var pixelsize = 16;
-// var gridwidth = 40;
-// var gridheight =30;
-// var pixelsize = 32;
-// var gridwidth = 20; // 640/32
-// var gridheight = 15; // 480/32
 var pixelsize = 64;
-var gridwidth = 640/pixelsize; // 640/32
-var gridheight = 896/pixelsize; // 480/32
-
+var gridwidth = 640/pixelsize;
+var gridheight = 896/pixelsize; 
 
 //  Direction consts
 var UP = 0;
@@ -814,16 +651,11 @@ var RIGHT = 3;
 
 var game = new Phaser.Game(config);
 
-    let score = 0;
-    let score1030 = 0;
-    let scorebrian = 0;
-    let scoreBoard;
-    let scorecamera;
-
-// var camera = new camera(game, 0, 0, 640, 480);
-// this.game.setBounds(0, 0, 640, 480);
-
-
+let score = 0;
+let score1030 = 0;
+let scorebrian = 0;
+let scoreBoard;
+let scorecamera;
 </script>
 
 </body>

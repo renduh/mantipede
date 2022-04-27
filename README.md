@@ -1,23 +1,7 @@
-SOUNDS NEEDED
+# Mantipede The Game
 
-1030 and Brian sorted
+Inspired by comedian and streamer [Rosco](https://www.twitch.tv/rosco).
 
-opening music - mari's got
+Same rules as Snake but this is Mantipede.
 
-
-NEED
-
-mantipede sound effect
-
-
-GAME
-
-start screen with button to start
-
-into game
-
-went you die 
-(you fucking idiot)
-overlay with press to play again
-
-
+Controls: swipe on mobile, cursors or WASD on desktop.
