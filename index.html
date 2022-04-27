@@ -13,17 +13,12 @@ html,body {
 	background:#202020;
 }
 #snake {
-/*    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;*/
     width: calc( 100% - 20px);
-    height: calc( 100vh - 10px);
+    height: calc( 100vh - 40px);
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin: 0px 10px 10px 10px;
+    align-items: flex-start;
+    margin: 10px 10px 30px 10px;
     box-sizing: border-box;
 }
 #snake canvas {
@@ -38,7 +33,7 @@ html,body {
 
 <body>
 
-<div id="snake">
+<div id="snake"></div>
   
 
 <!-- <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script> -->
@@ -51,11 +46,62 @@ html,body {
 
 
 
+class Start extends Phaser.Scene {
+    constructor ()
+    {
+        super({ key: 'Start', active: true });
+    }
+    preload ()
+    {
+        this.load.image('splash', 'img/startscreen.png');
+    }
+    create ()
+    {
+        running=false;
+        keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        game.scene.stop('GameScene');
+        var telltorun = false;
 
+        this.game.camera = this.cameras.main;
+        this.game.camera.setViewport(0, 0, 640, 936);
+        // this.game.camera.setBackgroundColor('#000000');
+        // this.game.camera.setBackgroundColor('rgba(0, 0, 0, 0.5)');
 
-
-
-
+        this.scene.bringToTop();
+        this.add.sprite( 0, 0, 'splash').setOrigin(0,0);
+        startButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Start Game', { font: '32px Courier', fill: '#00ff00' })
+        .setOrigin(0.5)
+        .setPadding(10)
+        .setStyle({ backgroundColor: '#111' })
+        .setInteractive({ useHandCursor: true })
+        // .on('pointerdown', startGame)
+        .on('pointerdown', () => {
+            running=true,
+            game.scene.stop(this),
+            game.scene.start('GameScene'),
+            game.scene.start('swipecontrols'),
+            game.scene.start('gui')
+        })
+        .on('pointerover', () => startButton.setStyle({ fill: '#f39c12' }))
+        .on('pointerout', () => startButton.setStyle({ fill: '#FFF' }));
+        startButton.visible = true;
+    }
+    update ()
+    {
+        // game.scene.stop('GameScene');
+        // info.setText('Score: ' + score);
+        // running=false;
+        if (keyENTER.isDown || this.telltorun==true) {
+            // this.scene.restart();
+            console.log('enter');
+            game.scene.stop(this);
+            running=true;
+            game.scene.start('GameScene');
+            game.scene.start('swipecontrols');
+            game.scene.start('gui');
+        }
+    }
+}
 
 
 
@@ -64,6 +110,7 @@ class Game extends Phaser.Scene {
     constructor ()
     {
         super('GameScene');
+        // super({ key: 'GameScene', active: true });
     }
 
 preload ()
@@ -95,33 +142,13 @@ preload ()
 
 create ()
 {
-
-
-        //  Using the Scene Data Plugin we can store data on a Scene level
-        // this.data.set('lives', 3);
-        // this.data.set('level', 5);
-        // this.data.set('score', 2000);
-
-        // var text = this.add.text(0, 0, '', { font: '14px Courier', fill: '#00ff00' });
-
-        // text.setText([
-        //     'Score: ' + this.data.get('score')
-        // ]);
-        // console.log(this.data);
-        // console.log(this.data.list.score);
-
-        // scoreBoard = this.add.text(0, 0, "SCORE: 0", { font: '18px Courier', fill: '#00ff00' });
-        // scorecamera = this.cameras.add(0, 0, 680, 40);
-        // scorecamera.setBackgroundColor('#000000');
-        // scoreBoard = this.add.text(0, 0, "SCORE: 0", { font: '18px Courier', fill: '#00ff00' });
-        // scorecamera.ignore([  ]);
-
-        score=0;
-
-        // Adding the background
-        this.add.image(0, 0, 'bg').setOrigin(0, 0);
-
-
+    score=0;
+    score1030=0;
+    scorebrian=0;
+    running=true;
+    game.scene.stop('Restart');
+    // Adding the background
+    this.add.image(0, 0, 'bg').setOrigin(0, 0);
 
 	// Create the camera
 	this.game.camera = this.cameras.main;
@@ -135,27 +162,7 @@ create ()
 	var jeezoh = this.sound.add('jeezoh');
 	var classwee = this.sound.add('classwee');
 
-
-
-	startButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Try again', { font: '32px Courier', fill: '#00ff00' })
-	    .setOrigin(0.5)
-	    .setPadding(10)
-	    .setStyle({ backgroundColor: '#111' })
-	    .setInteractive({ useHandCursor: true })
-	    // .on('pointerdown', startGame)
-
-	    .on('pointerdown', () => this.scene.restart())
-
-
-
-
-	    .on('pointerover', () => startButton.setStyle({ fill: '#f39c12' }))
-	    .on('pointerout', () => startButton.setStyle({ fill: '#FFF' }));
-	startButton.visible = false;
-
-
     var Food = new Phaser.Class({
-
         Extends: Phaser.GameObjects.Image,
 
         initialize:
@@ -163,13 +170,10 @@ create ()
         function Food (scene, x, y)
         {
             Phaser.GameObjects.Image.call(this, scene)
-
             this.setTexture('food');
             this.setPosition(x * pixelsize, y * pixelsize);
             this.setOrigin(0);
-
             this.total = 0;
-
             scene.children.add(this);
         },
 
@@ -183,52 +187,22 @@ create ()
             	if (Math.random() > 0.5) {jeezoh.play();} else {classwee.play();}
             	// score++;
             	score = score+1030;
-            	// scoreBoard.setText('Score: ' + score);
-
-
-
-            	// game.scene.scenes[0].data.list.score = game.scene.scenes[0].data.list.score + 1;
-
-
+                score1030++;
             } else if (food.texture.key=="foodbrian") {
             	console.log('Brian');
             	if (Math.random() > 0.5) {aye.play();} else {swine.play();}
             	score++;
-            	// scoreBoard.setText('Score: ' + score);
-
-
-
-            	// var score = this.data.get('score') + 1;
-            	// this.data.set('score', score);
-
-            	// game.scene.scenes[0].data.list.score = game.scene.scenes[0].data.list.score + 1;
-            	
-
-
+                scorebrian++;
             } else {
             	console.log('1030');
             	// jeezoh.play();
             	if (Math.random() > 0.5) {jeezoh.play();} else {classwee.play();}
-
-            	// console.log(game);
-            	// console.log(this.data.get('score'));
-            	// console.log(game.scene.scenes[0].data.list.score);
-            	// game.scene.scenes[0].data.list.score = game.scene.scenes[0].data.list.score + 1;
             	score = score+1030;
-            	// scoreBoard.setText('Score: ' + score);
-            	// this.events.emit('addScore');
-
-
-
-
-
+                score1030++;
             }
         }
 
     });
-
-
-
 
     var Snake = new Phaser.Class({
 
@@ -237,24 +211,16 @@ create ()
         function Snake (scene, x, y)
         {
             this.headPosition = new Phaser.Geom.Point(x, y);
-
             this.body = scene.add.group();
-
             this.head = this.body.create(x * pixelsize, y * pixelsize, 'headR');
             this.head.setOrigin(0);
-
             this.alive = true;
-
             this.speed = 150;
-
             this.moveTime = 0;
-
             this.tail = new Phaser.Geom.Point(x, y);
-
             this.heading = RIGHT;
             this.direction = RIGHT;
         },
-
         update: function (time)
         {
             if (time >= this.moveTime)
@@ -262,77 +228,38 @@ create ()
                 return this.move(time);
             }
         },
-
         faceLeft: function ()
         {
             if (this.direction === UP || this.direction === DOWN)
             {
                 this.heading = LEFT;
-                // this.head.setTexture('headL');
-                // this.body.setTexture('bodyL');
-				// this.body.children.each(function (segment) {
-	   //              segment.setTexture('bodyL');
-	   //          });
                 this.head.setTexture('headL');
-
-
-
-
-
             }
         },
-
         faceRight: function ()
         {
             if (this.direction === UP || this.direction === DOWN)
             {
                 this.heading = RIGHT;
-                // this.head.setTexture('headR');
-                // this.body.setTexture('bodyR');
-				// this.body.children.each(function (segment) {
-	   //              segment.setTexture('bodyR');
-	   //          });
                 this.head.setTexture('headR');
             }
         },
-
         faceUp: function ()
         {
             if (this.direction === LEFT || this.direction === RIGHT)
             {
                 this.heading = UP;                
-                // this.head.setTexture('headU');
-                // this.body.setTexture('bodyU');
-
-
-				// this.body.children.each(function (segment) {
-	   //              segment.setTexture('bodyU');
-	   //          });
                 this.head.setTexture('headU');
-                // this.body.getChildren()[0].originX = 16;
-                // this.body.getChildren()[0].originY = 16;
-                // this.body.getChildren()[0].rotation = -1.5;
-
-
-
-
             }
         },
-
         faceDown: function ()
         {
             if (this.direction === LEFT || this.direction === RIGHT)
             {
                 this.heading = DOWN;
-                // this.head.setTexture('headD');
-                // this.body.setTexture('bodyD');
-				// this.body.children.each(function (segment) {
-	   //              segment.setTexture('bodyD');
-	   //          });
                 this.head.setTexture('headD');
             }
         },
-
         move: function (time)
         {
             /**
@@ -387,10 +314,8 @@ create ()
             	}
             }
 
-
             //  Check to see if any of the body pieces have the same x/y as the head
             //  If they do, the head ran into the body
-
             var hitBody = Phaser.Actions.GetFirst(this.body.getChildren(), { x: this.head.x, y: this.head.y }, 1);
 
             if (hitBody)
@@ -399,7 +324,20 @@ create ()
 
                 this.alive = false;
 
-                	startButton.visible = true;
+                // restartButton.visible = true;
+                running=false;
+                game.scene.start('Restart');
+                // game.scene.stop('GameScene');
+                game.scene.stop(this);
+                game.scene.stop('swipecontrols');
+                // game.scene.stop('gui');
+
+
+                //     game.scene.stop(this),
+                //     game.scene.start('GameScene'),
+                //     game.scene.start('swipecontrols'),
+                //     game.scene.start('gui')
+
 
                 return false;
             }
@@ -411,28 +349,22 @@ create ()
                 return true;
             }
         },
-
         grow: function ()
         {
             var newPart = this.body.create(this.tail.x, this.tail.y, 'bodyR');
-
             newPart.setOrigin(0);
         },
-
         collideWithFood: function (food)
         {
             if (this.head.x === food.x && this.head.y === food.y)
             {
                 this.grow();
-
                 food.eat();
-
                 //  For every 5 items of food eaten we'll increase the snake speed a little
                 if (this.speed > 20 && food.total % 5 === 0)
                 {
                     this.speed -= 5;
                 }
-
                 return true;
             }
             else
@@ -440,7 +372,6 @@ create ()
                 return false;
             }
         },
-
         updateGrid: function (grid)
         {
             //  Remove all body pieces from valid positions list
@@ -452,22 +383,25 @@ create ()
                 grid[by][bx] = false;
 
             });
-
             return grid;
         }
-
     });
 
     food = new Food(this, 3, 4);
-
     snake = new Snake(this, 8, 8);
-
     //  Create our keyboard controls
     cursors = this.input.keyboard.createCursorKeys();
+
+    keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+    keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    // keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 }
 
 update (time, delta)
 {
+    // console.log(Phaser.Input.Keyboard.KeyCodes);
     if (!snake.alive)
     {
         return;
@@ -480,21 +414,32 @@ update (time, delta)
     * the LEFT cursor, it ignores it, because the only valid directions you
     * can move in at that time is up and down.
     */
-    if (cursors.left.isDown)
-    {
-        snake.faceLeft();
+    if (cursors.left.isDown || keyA.isDown)
+    {   
+        if(running==true) {
+            snake.faceLeft();
+        }
     }
-    else if (cursors.right.isDown)
+    else if (cursors.right.isDown || keyD.isDown)
     {
-        snake.faceRight();
+        if(running==true) {
+            snake.faceRight();
+        }
+        
     }
-    else if (cursors.up.isDown)
+    else if (cursors.up.isDown || keyW.isDown)
     {
-        snake.faceUp();
+        if(running==true) {
+            snake.faceUp();
+        }
+        
     }
-    else if (cursors.down.isDown)
+    else if (cursors.down.isDown || keyS.isDown)
     {
-        snake.faceDown();
+        if(running==true) {
+            snake.faceDown();
+        }
+        
     }
 
     if (snake.update(time))
@@ -506,6 +451,12 @@ update (time, delta)
             repositionFood();
         }
     }
+
+    // if (keyENTER.isDown) {
+    //     this.scene.restart();
+    // }
+
+
 }
 
 /**
@@ -578,185 +529,70 @@ function repositionFood ()
 }
 
 
+
+
+
+
+
+
+
+
 var info;
+var info1030;
+var infobrian;
+
 
 class GUI extends Phaser.Scene {
 
     constructor ()
     {
-        super({ key: 'UIScene', active: true });
-
+        // super({ key: 'UIScene', active: true });
+        super('gui');
         this.score = 0;
-        
     }
-
+    preload() 
+    {
+            this.load.image('icon1030', 'img/food1030.png');
+            this.load.image('iconbrian', 'img/foodbrian.png');
+    }
     create ()
     {
         //  Our Text object to display the Score
-        info = this.add.text(0, 0, 'Score: 0', { font: '32px Courier', fill: '#00ff00' });
+        info = this.add.text(630, 5, 'Score: 0', { font: '32px Courier', fill: '#00ff00', align: 'right' });
 
-        //  Grab a reference to the Game Scene
-        // let ourGame = this.scene.get('GameScene');
+        info1030 = this.add.text(45, 5, '0', { font: '32px Courier', fill: '#00ff00', align: 'left' });
+        infobrian = this.add.text(165, 5, '0', { font: '32px Courier', fill: '#00ff00', align: 'left' });
 
-        //  Listen for events from it
-        // ourGame.events.on('addScore', function () {
+        this.add.sprite( 0, 0, 'icon1030').setOrigin(0,0).setScale(0.6);
+        this.add.sprite( 120, 0, 'iconbrian').setOrigin(0,0).setScale(0.6);
 
-        //     this.score += 10;
+        
 
-        //     info.setText('Score: ' + this.score);
-
-        // }, this);
     }
-
     update ()
     {
     	info.setText('Score: ' + score);
+        info.x = 640 - info.width;
+        info1030.setText(score1030);
+        infobrian.setText(scorebrian);
     }
 }
 
 
 
-class controls extends Phaser.Scene {
 
-    constructor ()
-    {
-        super({ key: 'controllers', active: true });
-
-        
-    }
-
-    preload ()
-    {
-    	// this.load.image('buttonU', 'img/food.png');
-    	// this.load.image('buttonD', 'img/food.png');
-    	// this.load.image('buttonL', 'img/food.png');
-    	// this.load.image('buttonR', 'img/food.png');
-    	this.load.image('buttonU', 'img/arrowup.png');
-    	this.load.image('buttonD', 'img/arrowdown.png');
-    	this.load.image('buttonL', 'img/arrowleft.png');
-    	this.load.image('buttonR', 'img/arrowright.png');
-    }
-
-    create ()
-    {
-        console.log('create game');
-		// var test = this.add.text(0, 700, 'testing', { font: '18px Courier', fill: '#00ff00' });
-
-		// var button = this.add.sprite(50, 760, 'button', actionOnClick, this, 2, 1, 0);
-
-		// this.game.camera.setViewport(0, 40, 640, 640);
-
-		this.game.camera = this.cameras.main;
-		this.game.camera.setViewport(0, 700, 640, 200);
-		this.game.camera.setBackgroundColor('#000000');
-
-		const buttonU = this.add.sprite( 320, 31, 'buttonU')
-		.setInteractive()
-		.on('pointerdown', () => {
-			console.log('clicked');
-			snake.faceUp();
-		});
-		// .on('pointerup', () => buttonU.setScale( 1 ));
-
-		const buttonD = this.add.sprite( 320, 169, 'buttonD')
-		.setInteractive()
-		.on('pointerdown', () => {
-			// buttonD.setScale( 1.1 );
-			console.log('clicked');
-			snake.faceDown();
-		});
-		// .on('pointerup', () => buttonD.setScale( 1 ));
-
-		const buttonL = this.add.sprite( 144, 100, 'buttonL')
-		.setInteractive()
-		.on('pointerdown', () => {
-			// buttonL.setScale( 1.1 );
-			console.log('clicked');
-			snake.faceLeft();
-		});
-		// .on('pointerup', () => buttonL.setScale( 1 ));
-
-		const buttonR = this.add.sprite( 496, 100, 'buttonR')
-		.setInteractive()
-		.on('pointerdown', () => {
-			// buttonR.setScale( 1.1 );
-			console.log('clicked');
-			snake.faceRight();
-		});
-		// .on('pointerup', () => buttonR.setScale( 1 ));
-
-
-		// buttonU.displayWidth =90;
-		// buttonU.displayHeight =90;
-		// buttonD.displayWidth =90;
-		// buttonD.displayHeight =90;
-		// buttonL.displayWidth =90;
-		// buttonL.displayHeight =90;
-		// buttonR.displayWidth =90;
-		// buttonR.displayHeight =90;
-
-
-
-    }
-
-    update ()
-    {
-
-    }
-}
-function actionOnClick () {
-
-    console.log('click');
-
-}
-
-
-
-
-
-
-// document.dispatchEvent(
-//   new KeyboardEvent("keydown", {
-//     keyCode: 38, // example values.
-
-//   })
-// );
-
-
-// document.dispatchEvent(
-//   new KeyboardEvent("keydown", {
-//     key: "ArrowUp",
-//     which: 38
-//   })
-// );
-
-
-
-    // if (e.keyCode == '38') {
-    //     // up arrow
-    // }
-    // else if (e.keyCode == '40') {
-    //     // down arrow
-    // }
-    // else if (e.keyCode == '37') {
-    //    // left arrow
-    // }
-    // else if (e.keyCode == '39') {
-    //    // right arrow
-    // }
 
 
 // THE SWIPE STUFF
 // class Game extends Phaser.Scene
-class demo extends Phaser.Scene {
+class SwipeController extends Phaser.Scene {
     constructor() {
-        // super('examples');
-        super({ key: 'examples', active: true });
+        super('swipecontrols');
+        // super({ key: 'examples', active: true });
         // super({
         //     key: 'examples'
         // })
     }
-
     preload() { 
         console.log('preload swipe');
         this.load.scenePlugin({
@@ -765,17 +601,15 @@ class demo extends Phaser.Scene {
             sceneKey: 'rexGestures'
         });      
     }
-
     create() {
         console.log('create swipe');
         // this.print = print = this.add.text(0, 0, 'fgjfjf');
 
-        this.swipeInput = this.rexGestures.add.swipe({ velocityThreshold: 1000 })
+        this.swipeInput = this.rexGestures.add.swipe({ velocityThreshold: 500 })
             .on('swipe', function (swipe) {
                 // print.text += `swipe, v = ${swipe.dragVelocity}\n`;
             }, this);
     }
-
     update() {
         if (this.swipeInput.isSwiped) {
             // this.print.text += `update(): swipe ${dumpDirectionStates(this.swipeInput)}\n`;
@@ -788,7 +622,6 @@ class demo extends Phaser.Scene {
         }
     }
 }
-
 var directions = ['left', 'right', 'up', 'down'];
 var dumpDirectionStates = function (swipe) {
     var s = '';
@@ -797,19 +630,19 @@ var dumpDirectionStates = function (swipe) {
         dir = directions[i];
         if (swipe[dir]) {
             s += ' ' + dir;
-            if(dir=="left") {
+            if(dir=="left" && running==true) {
                 console.log('LEFT');
                 snake.faceLeft();
             }
-            if(dir=="right") {
+            if(dir=="right" && running==true) {
                 console.log('RIGHT');
                 snake.faceRight();
             }
-            if(dir=="up") {
+            if(dir=="up" && running==true) {
                 console.log('UP');
                 snake.faceUp();
             }
-            if(dir=="down") {
+            if(dir=="down" && running==true) {
                 console.log('DOWN');
                 snake.faceDown();
             }
@@ -823,6 +656,80 @@ var dumpDirectionStates = function (swipe) {
 
 
 
+class EndGame extends Phaser.Scene {
+    constructor ()
+    {
+        // super({ key: 'Restart', active: false });
+        super('Restart');
+    }
+    preload ()
+    {
+        this.load.image('theend', 'img/endscreen.png');
+    }
+    create ()
+    {
+        this.game.camera = this.cameras.main;
+        this.game.camera.setViewport(0, 0, 640, 936);
+        // this.game.camera.setBackgroundColor('#000000');
+        this.add.sprite( 0, 0, 'theend').setOrigin(0,0);
+        this.scene.bringToTop();
+
+        // running=false;
+
+        running=false;
+        keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        // game.scene.stop('GameScene');
+
+
+
+
+                game.scene.stop('GameScene');
+                game.scene.stop('swipecontrols');
+                game.scene.stop('gui');
+
+
+        restartButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Try again', { font: '32px Courier', fill: '#00ff00' })
+            .setOrigin(0.5)
+            .setPadding(10)
+            .setStyle({ backgroundColor: '#111' })
+            .setInteractive({ useHandCursor: true })
+            // .on('pointerdown', startGame)
+            // .on('pointerdown', () => this.scene.restart())
+            .on('pointerdown', () => 
+                // this.scene.restart()
+                // running=true,
+                game.scene.start('GameScene'),
+                game.scene.start('swipecontrols'),
+                game.scene.start('gui'),
+                // restartButton.visible = false
+                // this.scene.stop()
+                // game.scene.stop('Restart')
+            )
+                // game.scene.start('Restart');
+                // game.scene.stop('GameScene');
+                // game.scene.stop('swipecontrols');
+                // game.scene.stop('gui');            
+
+            .on('pointerover', () => restartButton.setStyle({ fill: '#f39c12' }))
+            .on('pointerout', () => restartButton.setStyle({ fill: '#FFF' }));
+            // restartButton.visible = true;
+            // restartButton.depth = 100;
+    }
+    update ()
+    {
+        // info.setText('Score: ' + score);
+        running=false;
+        if (keyENTER.isDown) {
+            // this.scene.restart();
+            console.log('enter');
+            game.scene.stop(this);
+            running=true;
+            game.scene.start('GameScene');
+            game.scene.start('swipecontrols');
+            game.scene.start('gui');
+        }
+    }
+}
 
 
 
@@ -830,12 +737,17 @@ var dumpDirectionStates = function (swipe) {
 
 
 
+    // if (keyENTER.isDown) {
+    //     this.scene.restart();
+    // }
 
 
 var config = {
-    type: Phaser.WEBGL,
+    // type: Phaser.WEBGL,
+    type: Phaser.AUTO,
     scale: {
         mode: Phaser.Scale.FIT,
+        // autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
         parent: 'snake',
         max: {
             width: 640,
@@ -850,14 +762,23 @@ var config = {
     backgroundColor: '#000000',
     // parent: 'snake',
     // scene: [ Game, GUI, controls, demo ]
-    scene: [ Game, GUI, demo ]
+    scene: [ Start, Game, GUI, SwipeController, EndGame ]
 };
 
 var snake;
 var food;
 var cursors;
+var wasd;
+var keyW;
+var keyA;
+var keyS;
+var keyD;
+var keyENTER;
 
 var startButton;
+var restartButton;
+
+var running=false;
 
 // var pixelsize = 16;
 // var gridwidth = 40;
@@ -879,6 +800,8 @@ var RIGHT = 3;
 var game = new Phaser.Game(config);
 
     let score = 0;
+    let score1030 = 0;
+    let scorebrian = 0;
     let scoreBoard;
     let scorecamera;
 
