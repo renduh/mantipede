@@ -13,11 +13,18 @@ html,body {
 	background:#202020;
 }
 #snake {
-    width: 100%;
+/*    width: 100%;
     height: 100vh;
     display: flex;
     justify-content: center;
+    align-items: center;*/
+    width: calc( 100% - 60px);
+    height: calc( 100vh - 60px);
+    display: flex;
+    justify-content: center;
     align-items: center;
+    margin: 30px;
+    box-sizing: border-box;
 }
 #snake canvas {
 /*	width: 100%!important;
@@ -118,7 +125,7 @@ create ()
 
 	// Create the camera
 	this.game.camera = this.cameras.main;
-	this.game.camera.setViewport(0, 40, 640, 1024);
+	this.game.camera.setViewport(0, 40, 640, 896);
 	this.game.camera.setBackgroundColor('#9e1a1a');
 	// this.cameras.main.ignore(scoreBoard);
 	console.log(this.game);
@@ -832,14 +839,14 @@ var config = {
         parent: 'snake',
         max: {
             width: 640,
-            height: 1064
+            height: 936
         },
         // autoCenter: Phaser.Scale.CENTER_BOTH,
         // width: 640,
         // height: 800
     },
     width: 640,
-    height: 1064,
+    height: 936,
     backgroundColor: '#000000',
     // parent: 'snake',
     // scene: [ Game, GUI, controls, demo ]
@@ -860,7 +867,7 @@ var startButton;
 // var gridheight = 15; // 480/32
 var pixelsize = 64;
 var gridwidth = 640/pixelsize; // 640/32
-var gridheight = 1024/pixelsize; // 480/32
+var gridheight = 896/pixelsize; // 480/32
 
 
 //  Direction consts
