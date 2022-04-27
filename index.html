@@ -54,6 +54,7 @@ class Start extends Phaser.Scene {
     preload ()
     {
         this.load.image('splash', 'img/startscreen.png');
+        this.load.image('startbuttonimage', 'img/startbutton.png');
     }
     create ()
     {
@@ -69,10 +70,12 @@ class Start extends Phaser.Scene {
 
         this.scene.bringToTop();
         this.add.sprite( 0, 0, 'splash').setOrigin(0,0);
-        startButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Start Game', { font: '32px Courier', fill: '#00ff00' })
-        .setOrigin(0.5)
-        .setPadding(10)
-        .setStyle({ backgroundColor: '#111' })
+        // var test = game.add.sprite(200, 200, 'mushroom');
+        // startButton = this.add.text(this.cameras.main.centerX, 782, 'Start Game', { font: '32px Courier', fill: '#00ff00' })
+        startButton = this.add.sprite(this.cameras.main.centerX, 815, 'startbuttonimage', { font: '32px Courier', fill: '#00ff00' })
+        // .setOrigin(0.5)
+        // .setPadding(10)
+        // .setStyle({ backgroundColor: '#111' })
         .setInteractive({ useHandCursor: true })
         // .on('pointerdown', startGame)
         .on('pointerdown', () => {
@@ -81,9 +84,9 @@ class Start extends Phaser.Scene {
             game.scene.start('GameScene'),
             game.scene.start('swipecontrols'),
             game.scene.start('gui')
-        })
-        .on('pointerover', () => startButton.setStyle({ fill: '#f39c12' }))
-        .on('pointerout', () => startButton.setStyle({ fill: '#FFF' }));
+        });
+        // .on('pointerover', () => startButton.setStyle({ fill: '#f39c12' }))
+        // .on('pointerout', () => startButton.setStyle({ fill: '#FFF' }));
         startButton.visible = true;
     }
     update ()
@@ -136,6 +139,7 @@ preload ()
     this.load.audio('swine', 'audio/swine.mp3');
     this.load.audio('jeezoh', 'audio/jeezoh.mp3');
     this.load.audio('classwee', 'audio/class.mp3');
+    this.load.audio('mant', 'audio/mant.mp3');
 
     this.load.image('bg', 'img/bg.png');
 }
@@ -161,6 +165,7 @@ create ()
 	var aye = this.sound.add('aye');
 	var jeezoh = this.sound.add('jeezoh');
 	var classwee = this.sound.add('classwee');
+	var mant = this.sound.add('mant');
 
     var Food = new Phaser.Class({
         Extends: Phaser.GameObjects.Image,
@@ -234,6 +239,7 @@ create ()
             {
                 this.heading = LEFT;
                 this.head.setTexture('headL');
+                mant.play();
             }
         },
         faceRight: function ()
@@ -242,6 +248,7 @@ create ()
             {
                 this.heading = RIGHT;
                 this.head.setTexture('headR');
+                mant.play();
             }
         },
         faceUp: function ()
@@ -250,6 +257,7 @@ create ()
             {
                 this.heading = UP;                
                 this.head.setTexture('headU');
+                mant.play();
             }
         },
         faceDown: function ()
@@ -258,6 +266,7 @@ create ()
             {
                 this.heading = DOWN;
                 this.head.setTexture('headD');
+                mant.play();
             }
         },
         move: function (time)
@@ -558,10 +567,14 @@ class GUI extends Phaser.Scene {
     create ()
     {
         //  Our Text object to display the Score
-        info = this.add.text(630, 5, 'Score: 0', { font: '32px Courier', fill: '#00ff00', align: 'right' });
+        // this.game.camera = this.cameras.main;
+        // this.game.camera.setBackgroundColor('#000000');
 
-        info1030 = this.add.text(45, 5, '0', { font: '32px Courier', fill: '#00ff00', align: 'left' });
-        infobrian = this.add.text(165, 5, '0', { font: '32px Courier', fill: '#00ff00', align: 'left' });
+        info = this.add.text(630, 5, 'Score: 0', { font: 'bold 32px Courier', fill: '#ebcb00', align: 'right' });
+
+
+        info1030 = this.add.text(45, 5, '0', { font: 'bold 32px Courier', fill: '#ebcb00', align: 'left' });
+        infobrian = this.add.text(165, 5, '0', { font: 'bold 32px Courier', fill: '#ebcb00', align: 'left' });
 
         this.add.sprite( 0, 0, 'icon1030').setOrigin(0,0).setScale(0.6);
         this.add.sprite( 120, 0, 'iconbrian').setOrigin(0,0).setScale(0.6);
@@ -665,6 +678,7 @@ class EndGame extends Phaser.Scene {
     preload ()
     {
         this.load.image('theend', 'img/endscreen.png');
+        this.load.image('tryagain', 'img/tryagainbutton.png');
     }
     create ()
     {
@@ -683,15 +697,16 @@ class EndGame extends Phaser.Scene {
 
 
 
-                game.scene.stop('GameScene');
+                // game.scene.stop('GameScene');
                 game.scene.stop('swipecontrols');
                 game.scene.stop('gui');
 
-
-        restartButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Try again', { font: '32px Courier', fill: '#00ff00' })
-            .setOrigin(0.5)
-            .setPadding(10)
-            .setStyle({ backgroundColor: '#111' })
+// var test = game.add.sprite(200, 200, 'mushroom');
+        // restartButton = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Try again', { font: '32px Courier', fill: '#00ff00' })
+        restartButton = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, 'tryagain')
+            // .setOrigin(0.5)
+            // .setPadding(10)
+            // .setStyle({ backgroundColor: '#111' })
             .setInteractive({ useHandCursor: true })
             // .on('pointerdown', startGame)
             // .on('pointerdown', () => this.scene.restart())
@@ -704,14 +719,14 @@ class EndGame extends Phaser.Scene {
                 // restartButton.visible = false
                 // this.scene.stop()
                 // game.scene.stop('Restart')
-            )
+            );
                 // game.scene.start('Restart');
                 // game.scene.stop('GameScene');
                 // game.scene.stop('swipecontrols');
                 // game.scene.stop('gui');            
 
-            .on('pointerover', () => restartButton.setStyle({ fill: '#f39c12' }))
-            .on('pointerout', () => restartButton.setStyle({ fill: '#FFF' }));
+            // .on('pointerover', () => restartButton.setStyle({ fill: '#f39c12' }))
+            // .on('pointerout', () => restartButton.setStyle({ fill: '#FFF' }));
             // restartButton.visible = true;
             // restartButton.depth = 100;
     }
@@ -759,7 +774,7 @@ var config = {
     },
     width: 640,
     height: 936,
-    backgroundColor: '#000000',
+    backgroundColor: '#780066',
     // parent: 'snake',
     // scene: [ Game, GUI, controls, demo ]
     scene: [ Start, Game, GUI, SwipeController, EndGame ]
