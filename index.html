@@ -10,7 +10,7 @@
 html,body {
 	padding:0;
 	margin:0;
-	background:#000;
+	background:#202020;
 }
 #snake {
     width: 100%;
@@ -238,7 +238,7 @@ create ()
 
             this.alive = true;
 
-            this.speed = 100;
+            this.speed = 150;
 
             this.moveTime = 0;
 
@@ -832,17 +832,18 @@ var config = {
         parent: 'snake',
         max: {
             width: 640,
-            height: 900
+            height: 1100
         },
         // autoCenter: Phaser.Scale.CENTER_BOTH,
         // width: 640,
         // height: 800
     },
     width: 640,
-    height: 900,
+    height: 1100,
     backgroundColor: '#000000',
-    parent: 'snake',
-    scene: [ Game, GUI, controls, demo ]
+    // parent: 'snake',
+    // scene: [ Game, GUI, controls, demo ]
+    scene: [ Game, GUI, demo ]
 };
 
 var snake;
